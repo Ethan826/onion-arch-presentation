@@ -36,6 +36,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/jsonwebtoken", "npm:8.5.8"],\
             ["@types/node", "npm:18.6.2"],\
             ["@types/pg", "npm:8.6.5"],\
+            ["@types/uuid", "npm:8.3.4"],\
             ["@typescript-eslint/eslint-plugin", "virtual:435c127833002d89b6f345959ea5b069d24af99223866b3a98319156ad7931f71ca4149904c7bc3f3edcee409460be1e3d2648e15303485d9f30f0f53885311d#npm:5.31.0"],\
             ["@typescript-eslint/parser", "virtual:435c127833002d89b6f345959ea5b069d24af99223866b3a98319156ad7931f71ca4149904c7bc3f3edcee409460be1e3d2648e15303485d9f30f0f53885311d#npm:5.31.0"],\
             ["eslint", "npm:8.20.0"],\
@@ -45,7 +46,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pino", "npm:8.3.1"],\
             ["prettier", "npm:2.7.1"],\
             ["ts-node", "virtual:435c127833002d89b6f345959ea5b069d24af99223866b3a98319156ad7931f71ca4149904c7bc3f3edcee409460be1e3d2648e15303485d9f30f0f53885311d#npm:10.9.1"],\
-            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
+            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"],\
+            ["uuid", "npm:8.3.2"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -324,6 +326,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/serve-static", "npm:1.13.10"],\
             ["@types/mime", "npm:1.3.2"],\
             ["@types/node", "npm:18.6.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/uuid", [\
+        ["npm:8.3.4", {\
+          "packageLocation": "./.yarn/cache/@types-uuid-npm-8.3.4-7547f4402c-6f11f3ff70.zip/node_modules/@types/uuid/",\
+          "packageDependencies": [\
+            ["@types/uuid", "npm:8.3.4"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -1606,6 +1617,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/jsonwebtoken", "npm:8.5.8"],\
             ["@types/node", "npm:18.6.2"],\
             ["@types/pg", "npm:8.6.5"],\
+            ["@types/uuid", "npm:8.3.4"],\
             ["@typescript-eslint/eslint-plugin", "virtual:435c127833002d89b6f345959ea5b069d24af99223866b3a98319156ad7931f71ca4149904c7bc3f3edcee409460be1e3d2648e15303485d9f30f0f53885311d#npm:5.31.0"],\
             ["@typescript-eslint/parser", "virtual:435c127833002d89b6f345959ea5b069d24af99223866b3a98319156ad7931f71ca4149904c7bc3f3edcee409460be1e3d2648e15303485d9f30f0f53885311d#npm:5.31.0"],\
             ["eslint", "npm:8.20.0"],\
@@ -1615,7 +1627,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pino", "npm:8.3.1"],\
             ["prettier", "npm:2.7.1"],\
             ["ts-node", "virtual:435c127833002d89b6f345959ea5b069d24af99223866b3a98319156ad7931f71ca4149904c7bc3f3edcee409460be1e3d2648e15303485d9f30f0f53885311d#npm:10.9.1"],\
-            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"]\
+            ["typescript", "patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=f456af"],\
+            ["uuid", "npm:8.3.2"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -2270,6 +2283,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["uri-js", "npm:4.4.1"],\
             ["punycode", "npm:2.1.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["uuid", [\
+        ["npm:8.3.2", {\
+          "packageLocation": "./.yarn/cache/uuid-npm-8.3.2-eca0baba53-5575a8a75c.zip/node_modules/uuid/",\
+          "packageDependencies": [\
+            ["uuid", "npm:8.3.2"]\
           ],\
           "linkType": "HARD"\
         }]\

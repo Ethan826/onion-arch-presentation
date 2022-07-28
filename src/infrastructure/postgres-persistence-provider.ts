@@ -5,7 +5,7 @@ import { PersistenceService } from "../services/persistence-service";
 const pgClient = new Client();
 
 export const postgresPersistenceProvider: PersistenceService<number> = {
-  getUser: async (id: number) => {
+  getUser: async (id: number): Promise<User | null> => {
     pgClient.connect();
 
     const res = await pgClient.query("SELECT * FROM users WHERE id = $1", [id]);
@@ -21,21 +21,17 @@ export const postgresPersistenceProvider: PersistenceService<number> = {
     return { givenName, middleName, familyName };
   },
 
-  insertUser: async (user: User) => {
+  insertUser: async (user: User): Promise<number> => {
     pgClient.connect();
 
     const { givenName, middleName, familyName } = user;
 
-    try {
-      await pgClient.query(
-        "INSERT INTO users (given_name, middle_name, family_name) VALUES ($1, $2, $3) RETURNING id",
-        [givenName, middleName, familyName]
-      );
+    const id = await pgClient.query(
+      "INSERT INTO users (given_name, middle_name, family_name) VALUES ($1, $2, $3) RETURNING id",
+      [givenName, middleName, familyName]
+    );
 
-      await pgClient.end();
-      return true;
-    } catch (_) {
-      return false;
-    }
+    await pgClient.end();
+    return id.rows[0].id;
   },
 };

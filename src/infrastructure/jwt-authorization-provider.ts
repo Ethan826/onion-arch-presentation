@@ -12,7 +12,7 @@ import { AuthorizationService } from "../services/authorization-service";
  ******************/
 
 export const jwtAuthorizationProvider: AuthorizationService<string> = {
-  authenticate: async (token: string) => promiseVerify(token, getKey, {}),
+  authorize: async (token: string) => promiseVerify(token, getKey, {}),
 };
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const client = jwksClient({ jwksUri: process.env.JWKS_URI! });
