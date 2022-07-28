@@ -13,7 +13,20 @@
 
 \frame{\titlepage}
 
-\begin{frame} % [fragile]
+\begin{frame}
+  \frametitle{AKA—}
+  \begin{itemize}
+    \item Hexagonal Architecture
+    \item Ports and Adapters
+    \item Clean Architecture
+  \end{itemize}
+
+  \vspace{1em}
+
+  Why? People have books to sell and blog posts to write, more or less?
+\end{frame}
+
+\begin{frame}
   \frametitle{Dependency Inversion Principle}
   Per Wikipedia:
 
@@ -53,14 +66,16 @@
   Let's say I have two concepts:
 
   \begin{itemize}
-    \item A \texttt{user}, and
+    \item A \textsc{User}, and
     \item an Express server with a \texttt{POST} endpoint called
           \texttt{updateUser}, which takes in a \textsc{json} payload and
-          updates the PostgreSQL database to the new user; the server emits
-          traces and metrics via Open Telemetry, and checks a bearer token to
-          ensure the \texttt{admin} role is set properly.
+          updates the PostgreSQL database to match the payload, and which server
+          emits traces and metrics via Open Telemetry, and also checks a JWT
+          bearer token to ensure the \texttt{admin} role is set properly.
   \end{itemize}
+
   \vspace{1em}
+
   Which is more stable, less likely to change, closest to our business domain,
   etc.?
 \end{frame}
@@ -246,12 +261,21 @@ interface User {
 
   \vspace{1em}
 
-  \begin{minted}{typescript}
-interface AuthorizationService<T> {
-  authenticate: (credential: T) => Promise<boolean>;
+  \begin{minted}[fontsize=\footnotesize]{typescript}
+interface AuthorizationService<Credential> {
+  /** Authenticate a user asynchronously based on the credential. */
+  authenticate: (credential: Credential) => Promise<boolean>;
+}
+
+interface PersistenceService<Id> {
+  /** Get a user by ID. */
+  getUser: (id: Id) => Promise<User>;
+  /** Update a user, returning a `true` on success. */
+  updateUser: (user: User) => Promise<boolean>;
 }
 
 interface LoggingService {
+  /** Log a message synchronously. */
   log: (message: string) => void;
 }
 \end{minted}
@@ -259,28 +283,136 @@ interface LoggingService {
 
 \begin{frame}[fragile]
   \frametitle{Dependency Inversion Principle, continued}
-  Define some concretions:
+  Define some concretions (the details aren't important---what's important is
+  that they \emph{are} details):
+
+  \vspace{1em}
+
+  \begin{minted}[fontsize=\tiny]{typescript}
+import jwksClient, { CertSigningKey, SigningKey } from "jwks-rsa";
+import { type GetPublicKeyOrSecret, type VerifyOptions, verify, Secret, } from "jsonwebtoken";
+
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const client = jwksClient({ jwksUri: process.env.JWKS_URI! });
+
+const isCertSigningKey = (key: SigningKey | undefined): key is CertSigningKey =>
+  !!key && Object.hasOwnProperty.call(key, "publicKey");
+
+const getKey: GetPublicKeyOrSecret = (header, callback): void => {
+  client.getSigningKey(header.kid, (_, key) => {
+    const signingKey = isCertSigningKey(key) ? key.publicKey : key?.rsaPublicKey;
+    callback(null, signingKey);
+  });
+};
+
+const promiseVerify =
+  (token: string, getKey: GetPublicKeyOrSecret | Secret, options: VerifyOptions): Promise<boolean> =>
+    new Promise((resolve) =>
+      verify(token, getKey, options, (err) => err ? resolve(false) : resolve(true))
+    );
+
+export const jwtAuthorizationProvider: AuthorizationService<string> = {
+  authenticate: async (token: string) => promiseVerify(token, getKey, {}),
+};
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Dependency Inversion Principle, continued}
+  Define some more concretions (the details aren't important---what's important
+  is that they \emph{are} details):
+
+  \vspace{1em}
+
+  \begin{minted}[fontsize=\tiny]{typescript}
+import { Client } from "pg";
+
+const pgClient = new Client();
+
+export const postgresPersistenceProvider: PersistenceService<number> = {
+  getUser: async (id: number) => {
+    pgClient.connect();
+
+    const res = await pgClient.query("SELECT * FROM users WHERE id = $1", [id]);
+    await pgClient.end();
+
+    if (res.rowCount === 0) return null;
+    if (res.rowCount > 1) throw new Error("Multiple users with the same ID");
+
+    const { givenName, middleName, familyName } = res.rows[0];
+    if (!givenName || !familyName) throw new Error("Invalid user");
+
+    return { givenName, middleName, familyName };
+  },
+
+  // ...
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Dependency Inversion Principle, continued}
+  Define some more concretions (the details aren't important---what's important
+  is that they \emph{are} details):
+
+  \vspace{1em}
+
+  \begin{minted}[fontsize=\tiny]{typescript}
+  // ...
+
+  insertUser: async (user: User) => {
+    pgClient.connect();
+
+    const { givenName, middleName, familyName } = user;
+
+    try {
+      await pgClient.query(
+        "INSERT INTO users (given_name, middle_name, family_name) VALUES ($1, $2, $3) RETURNING id",
+        [givenName, middleName, familyName]
+      );
+
+      await pgClient.end();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  },
+};
+  \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Dependency Inversion Principle, continued}
+  Define some more concretions (the details aren't important---what's important
+  is that they \emph{are} details):
 
   \vspace{1em}
 
   \begin{minted}{typescript}
-import jwt, { type Jwt } from "jsonwebtoken";
-import jwksClient from "jwks-rsa";
+import pinoCtor from "pino";
 
-const client = jwksClient({ jwksUri: process.env.JWKS_URI });
+const pino = pinoCtor();
 
-const getKey = (header, callback) => {
-  client.getSigningKey(header.kid, (err, key) => {
-    callback(null, key.publicKey || key.rsaPublicKey);
-  });
-}
-
-const jwtAuth: AuthorizationService<Jwt> = {
-jwt.verify(token, getKey, options, function(err, decoded) {
-  console.log(decoded.foo) // bar
-});
+export const pinoLoggingProvider: LoggingService = {
+  log: pino.debug,
 };
   \end{minted}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dependency Inversion Principle, continued}
+  Okay, so what's the pattern here?
+
+  \begin{itemize}
+    \item The \texttt{User} interface is very abstract and depends on nothing
+          else.
+    \item The service interfaces (e.g. \texttt{LoggingService}) are fairly
+          abstract and generic, and are designed to give our application exactly
+          the functionality we want.
+    \item The service implementations (e.g. \texttt{pinoLoggingProvider}) are
+          very concrete---and kind of gross. They hide away all the tangled
+          wires and allow us to use service interfaces that we designed for our
+          application.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}
