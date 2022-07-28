@@ -10,6 +10,8 @@
 !.yarn/cache
 #.pnp.*
 
+/dist
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof

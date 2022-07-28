@@ -4,6 +4,8 @@ import { User } from "../core/user";
 export interface PersistenceService<Id> {
   /** Get a user by ID. */
   getUser: (id: Id) => Promise<User | null>;
+  /** Get all users. */
+  getUsers: () => Promise<User[]>;
   /** Update a user, returning the ID on success. */
   insertUser: (user: User) => Promise<Id>;
 }

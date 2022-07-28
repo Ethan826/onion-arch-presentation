@@ -5,15 +5,8 @@ import {
   verify,
   Secret,
 } from "jsonwebtoken";
-import { AuthorizationService } from "../services/authorization-service";
+import type { AuthorizationService } from "../services/authorization-service";
 
-/******************
- * IMPLEMENTATION *
- ******************/
-
-export const jwtAuthorizationProvider: AuthorizationService<string> = {
-  authorize: async (token: string) => promiseVerify(token, getKey, {}),
-};
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const client = jwksClient({ jwksUri: process.env.JWKS_URI! });
 const isCertSigningKey = (key: SigningKey | undefined): key is CertSigningKey =>
@@ -26,6 +19,7 @@ const getKey: GetPublicKeyOrSecret = (header, callback): void => {
     callback(null, signingKey);
   });
 };
+
 const promiseVerify = (
   token: string,
   getKey: GetPublicKeyOrSecret | Secret,
@@ -36,3 +30,7 @@ const promiseVerify = (
       err ? resolve(false) : resolve(true)
     )
   );
+
+export const jwtAuthorizationProvider: AuthorizationService<string> = {
+  authorize: async (token: string) => promiseVerify(token, getKey, {}),
+};

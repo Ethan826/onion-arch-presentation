@@ -8,6 +8,8 @@ export const inMemoryPersistenceProvider: PersistenceService<string> = {
   getUser: (id: string): Promise<User | null> =>
     Promise.resolve(memoryDb.get(id) ?? null),
 
+  getUsers: () => Promise.resolve([...memoryDb.values()]),
+
   insertUser: (user: User): Promise<string> => {
     const id = v4();
     memoryDb.set(id, user);
