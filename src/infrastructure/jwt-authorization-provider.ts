@@ -1,3 +1,4 @@
+import { AuthorizationService } from "../services/authorization-service";
 import jwksClient, { CertSigningKey, SigningKey } from "jwks-rsa";
 import {
   type GetPublicKeyOrSecret,
@@ -5,7 +6,6 @@ import {
   verify,
   Secret,
 } from "jsonwebtoken";
-import type { AuthorizationService } from "../services/authorization-service";
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const client = jwksClient({ jwksUri: process.env.JWKS_URI! });

@@ -1,6 +1,6 @@
 import express from "express";
 import { isUser } from "./core/user";
-import { naiveJwtProvider } from "./infrastructure/backdoor-authorization-provider";
+import { naiveJwtProvider } from "./infrastructure/naive-authorization-provider";
 import { consoleLoggingProvider } from "./infrastructure/console-logging-provider";
 import { inMemoryPersistenceProvider } from "./infrastructure/in-memory-persistence-provider";
 import { ProdApiProvider } from "./infrastructure/prod-api-provider";

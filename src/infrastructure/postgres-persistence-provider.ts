@@ -21,6 +21,21 @@ export const postgresPersistenceProvider: PersistenceService<number> = {
     return { givenName, middleName, familyName };
   },
 
+  getUsers: async (): Promise<User[]> => {
+    pgClient.connect();
+
+    const res = await pgClient.query("SELECT * FROM users");
+    await pgClient.end();
+
+    return res.rows.map((row) => {
+      const { givenName, middleName, familyName } = row;
+
+      if (!givenName || !familyName) throw new Error("Invalid user");
+
+      return { givenName, middleName, familyName };
+    });
+  },
+
   insertUser: async (user: User): Promise<number> => {
     pgClient.connect();
 
