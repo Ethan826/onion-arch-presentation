@@ -151,9 +151,9 @@ interface User {
     \item A \texttt{User} is not supposed to be volatile, so it is the kind of
           thing that belongs in a low-level module.
     \item SQL, Open Telemetry, Express, Bearer Tokens, etc., are volatile,
-          and so belong in high-level modules.
-    \item Our \texttt{User}, in a low-level module, depends here on numerous
-          high-level modules.
+          and so belong in low-level modules.
+    \item Our \texttt{User}, in a high-level module, depends here on numerous
+          low-level modules.
   \end{itemize}
 \end{frame}
 
@@ -169,7 +169,7 @@ interface User {
 
   \vspace{1em}
 
-  Sometimes it will be necessary for lower-level modules to interact.
+  Sometimes it will be necessary for higher-level modules to interact.
 
   \vspace{1em}
 
