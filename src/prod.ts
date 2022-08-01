@@ -1,10 +1,10 @@
-import { User } from "../core/user";
-import { ApiService } from "../services/api-service";
-import { AuthorizationService } from "../services/authorization-service";
-import { LoggingService } from "../services/logging-service";
-import { PersistenceService } from "../services/persistence-service";
+import { User } from "./core/user";
+import { ApiService } from "./services/api-service";
+import { AuthorizationService } from "./services/authorization-service";
+import { LoggingService } from "./services/logging-service";
+import { PersistenceService } from "./services/persistence-service";
 
-export class ProdApiProvider implements ApiService<string, string> {
+export class Prod implements ApiService<string, string> {
   public log;
 
   private authorize;

@@ -3,13 +3,14 @@ import { isUser } from "./core/user";
 import { naiveJwtProvider } from "./infrastructure/naive-authorization-provider";
 import { consoleLoggingProvider } from "./infrastructure/console-logging-provider";
 import { inMemoryPersistenceProvider } from "./infrastructure/in-memory-persistence-provider";
-import { ProdApiProvider } from "./infrastructure/prod-api-provider";
+import { Prod } from "./prod";
 
 const app = express();
 const port = 3000;
 app.use(express.json());
 
-const api = new ProdApiProvider({
+// Compare to Nest and other IOC / DI frameworks.
+const api = new Prod({
   loggingProvider: consoleLoggingProvider,
   persistenceProvider: inMemoryPersistenceProvider,
   authorizationProvider: naiveJwtProvider,
