@@ -6,6 +6,6 @@ export interface PersistenceService<Id> {
   getUser: (id: Id) => Promise<User | null>;
   /** Get all users. */
   getUsers: () => Promise<User[]>;
-  /** Update a user, returning the ID on success. */
+  /** Insert a user, returning the ID on success. */
   insertUser: (user: User) => Promise<Id>;
 }
