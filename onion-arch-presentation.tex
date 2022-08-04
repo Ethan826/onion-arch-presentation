@@ -149,7 +149,7 @@ interface User {
   In what way are we violating the Dependency Inversion Principle?
   \begin{itemize}
     \item A \texttt{User} is not supposed to be volatile, so it is the kind of
-          thing that belongs in a low-level module.
+          thing that belongs in a high-level module.
     \item SQL, Open Telemetry, Express, Bearer Tokens, etc., are volatile,
           and so belong in low-level modules.
     \item Our \texttt{User}, in a high-level module, depends here on numerous
